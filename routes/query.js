@@ -42,16 +42,16 @@ router.get('/', async function(req, res, next) {
             const contract = network.getContract('record_dev');
    
             // just debug
-            const id = await contract.evaluateTransaction('getUserId');
-            console.log(id);
+            // const id = await contract.evaluateTransaction('getUserId');
+            // console.log(id);
 
-            const attr = await contract.evaluateTransaction('getUserAttr');
-            console.log(attr);
+            // const attr = await contract.evaluateTransaction('getUserAttr');
+            // console.log(attr);
 
             // Evaluate the specified transaction.
             // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
             // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
-            const result = await contract.evaluateTransaction('queryAllCars');
+            const result = await contract.evaluateTransaction('getMyMedicalInfo');
             console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
             res.json(JSON.parse(result.toString()));
     
