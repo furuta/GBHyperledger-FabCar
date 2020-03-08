@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
-  const { FileSystemWallet, Gateway } = require('fabric-network'); //Creates a new gateway and use it to connect to the network
+  const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
   const path = require('path');
   
   const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
