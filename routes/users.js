@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   const { FileSystemWallet, Gateway } = require('fabric-network'); //Creates a new gateway and use it to connect to the network
   const path = require('path');
   
@@ -31,12 +31,12 @@ router.get('/', function(req, res, next) {
           }
 
           // Create a new gateway for connecting to our peer node.
-          const gateway = new Gateway();
-          await gateway.connect(ccpPath, { wallet, identity: 'admin', discovery: { enabled: true, asLocalhost: true } });
+          const gateway_admin = new Gateway();
+          await gateway_admin.connect(ccpPath, { wallet, identity: 'admin', discovery: { enabled: true, asLocalhost: true } });
 
           // Get the CA client object from the gateway for interacting with the CA.
-          const ca = gateway.getClient().getCertificateAuthority();
-          const adminIdentity = gateway.getCurrentIdentity();
+          const ca = gateway_admin.getClient().getCertificateAuthority();
+          const adminIdentity = gateway_admin.getCurrentIdentity();
 
           // Register the user, enroll the user, and import the new identity into the wallet.
           const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: name, role: 'client' }, adminIdentity);
