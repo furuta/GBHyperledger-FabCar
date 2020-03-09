@@ -23,9 +23,10 @@ router.get('/', async function(req, res, next) {
             console.log(`Wallet path: ${walletPath}`);
     
             // Check to see if we've already enrolled the user.
-            const userExists = await wallet.exists('user_test2');
+            const name = req.query.name;
+            const userExists = await wallet.exists(name);
             if (!userExists) {
-                console.log('An identity for the user "user_test2" does not exist in the wallet');
+                console.log(`An identity for the user ${name} does not exist in the wallet`);
                 console.log('Run the registerUser.js application before retrying');
                 return;
             }
@@ -33,7 +34,7 @@ router.get('/', async function(req, res, next) {
             // Create a new gateway for connecting to our peer node.
             const gateway = new Gateway();
             // use the identity of user_test2 from wallet to connect
-            await gateway.connect(ccpPath, { wallet, identity: 'user_test2', discovery: { enabled: true, asLocalhost: true } });
+            await gateway.connect(ccpPath, { wallet, identity: name, discovery: { enabled: true, asLocalhost: true } });
     
             // Get the network (channel) our contract is deployed to.
             const network = await gateway.getNetwork('mychannel');
@@ -54,7 +55,7 @@ router.get('/', async function(req, res, next) {
             // Evaluate the specified transaction.
             // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
             // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
-            const result = await contract.evaluateTransaction('getMedicalInfoByPatientId', 'user_test2');
+            const result = await contract.evaluateTransaction('getMedicalInfoByPatientId', name);
             console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
             res.json(JSON.parse(result.toString()));
     
