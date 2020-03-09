@@ -59,9 +59,6 @@ router.get('/', async function(req, res, next) {
           const result = await contract.submitTransaction('createPatientRecord', name);
           console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
-          // if (result) {
-          //   res.json(JSON.parse(['登録完了']));
-          // }
           res.json(JSON.parse(result));
   
       } catch (error) {
