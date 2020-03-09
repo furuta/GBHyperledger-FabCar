@@ -37,7 +37,7 @@ router.get('/', async function(req, res, next) {
 
             // Register the user, enroll the user, and import the new identity into the wallet.
             const secret = await ca.register(
-              { affiliation: "org1.department1", enrollmentID: userId, role: "client",attrs:[{name:'role',value:'client',ecert: true}] },
+              { affiliation: "org1.department1", enrollmentID: name, role: "client",attrs:[{name:'role',value:'client',ecert: true}] },
               adminIdentity
             );
             const enrollment = await ca.enroll({ enrollmentID: name, enrollmentSecret: secret });
