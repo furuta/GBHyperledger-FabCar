@@ -57,7 +57,7 @@ router.get('/', async function(req, res, next) {
     
         } catch (error) {
             console.error(`Failed to evaluate transaction: ${error}`);
-            process.exit(1);
+            // process.exit(1);
         }
         
     

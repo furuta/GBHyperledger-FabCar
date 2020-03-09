@@ -17,33 +17,30 @@ router.get('/', async function(req, res, next) {
           // Check to see if we've already enrolled the user.
           const name = req.query.name;
           const userExists = await wallet.exists(name);
-          if (userExists) {
-              console.log(`An identity for the user "${name}" already exists in the wallet`);
-              return;
+
+          if (!userExists) {
+            // Check to see if we've already enrolled the admin user.
+            const adminExists = await wallet.exists('admin');
+            if (!adminExists) {
+                console.log('An identity for the admin user "admin" does not exist in the wallet');
+                console.log('Run the enrollAdmin.js application before retrying');
+                return;
+            }
+
+            // Create a new gateway for connecting to our peer node.
+            const gateway_admin = new Gateway();
+            await gateway_admin.connect(ccpPath, { wallet, identity: 'admin', discovery: { enabled: true, asLocalhost: true } });
+
+            // Get the CA client object from the gateway for interacting with the CA.
+            const ca = gateway_admin.getClient().getCertificateAuthority();
+            const adminIdentity = gateway_admin.getCurrentIdentity();
+
+            // Register the user, enroll the user, and import the new identity into the wallet.
+            const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: name, role: 'client' }, adminIdentity);
+            const enrollment = await ca.enroll({ enrollmentID: name, enrollmentSecret: secret });
+            const userIdentity = X509WalletMixin.createIdentity('Org1MSP', enrollment.certificate, enrollment.key.toBytes());
+            await wallet.import(name, userIdentity);
           }
-
-          // Check to see if we've already enrolled the admin user.
-          const adminExists = await wallet.exists('admin');
-          if (!adminExists) {
-              console.log('An identity for the admin user "admin" does not exist in the wallet');
-              console.log('Run the enrollAdmin.js application before retrying');
-              return;
-          }
-
-          // Create a new gateway for connecting to our peer node.
-          const gateway_admin = new Gateway();
-          await gateway_admin.connect(ccpPath, { wallet, identity: 'admin', discovery: { enabled: true, asLocalhost: true } });
-
-          // Get the CA client object from the gateway for interacting with the CA.
-          const ca = gateway_admin.getClient().getCertificateAuthority();
-          const adminIdentity = gateway_admin.getCurrentIdentity();
-
-          // Register the user, enroll the user, and import the new identity into the wallet.
-          const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: name, role: 'client' }, adminIdentity);
-          const enrollment = await ca.enroll({ enrollmentID: name, enrollmentSecret: secret });
-          const userIdentity = X509WalletMixin.createIdentity('Org1MSP', enrollment.certificate, enrollment.key.toBytes());
-          await wallet.import(name, userIdentity);
-
   
           // Create a new gateway for connecting to our peer node.
           const gateway = new Gateway();
@@ -61,11 +58,16 @@ router.get('/', async function(req, res, next) {
           // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
           const result = await contract.evaluateTransaction('createPatientRecord', name);
           console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-          res.json(JSON.parse(result.toString()));
+
+          // if (result) {
+          //   res.json(JSON.parse(['登録完了']));
+          // }
+          res.json(JSON.parse(result));
   
       } catch (error) {
           console.error(`Failed to evaluate transaction: ${error}`);
-          process.exit(1);
+          console.error(`Line: ${error.lineNumber}`);
+          // process.exit(1);
       }
       
 });
