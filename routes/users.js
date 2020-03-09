@@ -56,7 +56,7 @@ router.get('/', async function(req, res, next) {
           // Evaluate the specified transaction.
           // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
           // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
-          const result = await contract.evaluateTransaction('createPatientRecord', name);
+          const result = await contract.submitTransaction('createPatientRecord', name);
           console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
           // if (result) {
