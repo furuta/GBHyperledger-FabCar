@@ -44,10 +44,10 @@ router.get('/', async function(req, res, next) {
    
             // just debug
             const user_id = await contract.evaluateTransaction('getUserId');
-            console.log(user_id);
+            console.log(user_id.toString());
 
-            const id = await contract.evaluateTransaction('getId');
-            console.log(id);
+            // const id = await contract.evaluateTransaction('getId');
+            // console.log(id.toString());
 
             // const attr = await contract.evaluateTransaction('getUserAttr');
             // console.log(attr);
