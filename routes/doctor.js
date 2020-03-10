@@ -171,7 +171,7 @@ router.get('/allowed', async function(req, res, next) {
   }
 })
 
-router.get('/permission', async function(req, res, next) {
+router.get('/permission', async function(req, res, next) {
   const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
   const path = require('path');
   const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
