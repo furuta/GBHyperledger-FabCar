@@ -169,6 +169,7 @@ router.get('/accesses', async function(req, res, next) {
     const contract = network.getContract('record_dev');
 
     const result = await contract.evaluateTransaction('getAccessList');
+    console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     res.json(JSON.parse(result.toString()));
   } catch (error) {
@@ -206,6 +207,7 @@ router.get('/add', async function(req, res, next) {
 
     const result = await contract.submitTransaction('addPermission', id, role);
     // result is boolean
+    console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     res.json(JSON.parse(result.toString()));
   } catch (error) {
