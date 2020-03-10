@@ -216,4 +216,41 @@ router.get('/add', async function(req, res, next) {
   }
 })
 
+router.get('/delete', async function(req, res, next) {
+  const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
+  const path = require('path');
+  const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
+  
+  try {
+    const name = req.query.name;
+    const id = req.query.id;
+
+    const walletPath = path.join(process.cwd(), 'wallet');
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(`Wallet path: ${walletPath}`);
+
+    // Check to see if we've already enrolled the user.
+    const userExists = await wallet.exists(name);
+
+    if (!userExists) {
+      console.log(`An identity for the user ${name} does not exist in the wallet`);
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, { wallet, identity: name, discovery: { enabled: true, asLocalhost: true } });
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('record_dev');
+
+    const result = await contract.submitTransaction('deletePermission', id);
+    // result is boolean
+    console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+
+    res.json(JSON.parse(result.toString()));
+  } catch (error) {
+    console.error(`Failed to evaluate transaction: ${error}`);
+    // process.exit(1);
+  }
+})
+
 module.exports = router;
