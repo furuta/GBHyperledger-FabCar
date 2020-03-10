@@ -36,8 +36,9 @@ router.get('/', async function(req, res, next) {
             const adminIdentity = gateway_admin.getCurrentIdentity();
 
             // Register the user, enroll the user, and import the new identity into the wallet.
+            // const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: name, role: 'client' }, adminIdentity);
             const secret = await ca.register(
-              { affiliation: "org1.department1", enrollmentID: name, role: "client",attrs:[{name:'role',value:'client',ecert: true}] },
+              { affiliation: "org1.department1", enrollmentID: name, role: "client", attrs:[{name:'role',value:'client',ecert: true}] },
               adminIdentity
             );
             const enrollment = await ca.enroll({ enrollmentID: name, enrollmentSecret: secret });
@@ -66,10 +67,30 @@ router.get('/', async function(req, res, next) {
   
       } catch (error) {
           console.error(`Failed to evaluate transaction: ${error}`);
-          console.error(`Line: ${error.lineNumber}`);
           // process.exit(1);
       }
       
 });
+
+router.get('/info', async function(req, res, next) {
+  const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
+  const path = require('path');
+  const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
+  
+  try {
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, { wallet, identity: 'doctor_test1', discovery: { enabled: true, asLocalhost: true } });
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('record_dev');
+
+    const result = await contract.submitTransaction('writePatientRecord', 'user_test1', 'test medical record');
+
+    res.json(result);
+  } catch (error) {
+    console.error(`Failed to evaluate transaction: ${error}`);
+    // process.exit(1);
+  }
+  
+})
 
 module.exports = router;
