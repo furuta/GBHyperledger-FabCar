@@ -78,7 +78,9 @@ router.get('/info', async function(req, res, next) {
   const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
   
   try {
-    const name = 'doctor_test1';
+    const name = req.query.name;
+    const patient = req.query.patient;
+    const info = req.query.info;
 
     const walletPath = path.join(process.cwd(), 'wallet');
     const wallet = new FileSystemWallet(walletPath);
@@ -97,7 +99,7 @@ router.get('/info', async function(req, res, next) {
     const network = await gateway.getNetwork('mychannel');
     const contract = network.getContract('record_dev');
 
-    const result = await contract.submitTransaction('writePatientRecord', 'user_test1', 'test medical record');
+    const result = await contract.submitTransaction('writePatientRecord', patient, info);
 
     res.json(result);
   } catch (error) {
