@@ -98,7 +98,7 @@ router.get('/info', async function(req, res, next) {
     const network = await gateway.getNetwork('mychannel');
     const contract = network.getContract('record_dev');
 
-    const result = await contract.submitTransaction('getMyMedicalInfo');
+    const result = await contract.evaluateTransaction('getMyMedicalInfo');
 
     res.json(JSON.parse(result.toString()));
   } catch (error) {
