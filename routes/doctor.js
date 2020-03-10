@@ -61,6 +61,7 @@ router.get('/', async function(req, res, next) {
           // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
           // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
           const result = await contract.submitTransaction('createPatientRecord');
+          // result is boolean
           console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
           res.json(JSON.parse(result.toString()));
@@ -131,6 +132,7 @@ router.get('/write_info', async function(req, res, next) {
     const contract = network.getContract('record_dev');
 
     const result = await contract.submitTransaction('writePatientRecord', patient, info);
+    // result is boolean
 
     res.json(result);
   } catch (error) {
@@ -196,6 +198,7 @@ router.get('/permission', async function(req, res, next) {
     const contract = network.getContract('record_dev');
 
     const result = await contract.evaluateTransaction('checkMyPermissionStatus', patient);
+    // result is boolean
 
     res.json(JSON.parse(result.toString()));
   } catch (error) {
