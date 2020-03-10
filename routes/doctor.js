@@ -63,7 +63,7 @@ router.get('/', async function(req, res, next) {
           const result = await contract.submitTransaction('createPatientRecord');
           console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
-          res.json(JSON.parse(result));
+          res.json(JSON.parse(result.toString()));
   
       } catch (error) {
           console.error(`Failed to evaluate transaction: ${error}`);
@@ -85,9 +85,7 @@ router.get('/info', async function(req, res, next) {
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
-    // Check to see if we've already enrolled the user.
     const userExists = await wallet.exists(name);
-
     if (!userExists) {
       console.log(`An identity for the user ${name} does not exist in the wallet`);
       return;
@@ -100,7 +98,7 @@ router.get('/info', async function(req, res, next) {
 
     const result = await contract.evaluateTransaction('getMedicalInfoByPatientId', patient);
 
-    res.json(result);
+    res.json(JSON.parse(result.toString()));
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     // process.exit(1);
@@ -121,9 +119,7 @@ router.get('/write_info', async function(req, res, next) {
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
-    // Check to see if we've already enrolled the user.
     const userExists = await wallet.exists(name);
-
     if (!userExists) {
       console.log(`An identity for the user ${name} does not exist in the wallet`);
       return;
@@ -155,9 +151,7 @@ router.get('/allowed', async function(req, res, next) {
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
-    // Check to see if we've already enrolled the user.
     const userExists = await wallet.exists(name);
-
     if (!userExists) {
       console.log(`An identity for the user ${name} does not exist in the wallet`);
       return;
@@ -170,7 +164,7 @@ router.get('/allowed', async function(req, res, next) {
 
     const result = await contract.evaluateTransaction('getAllowedList');
 
-    res.json(result);
+    res.json(JSON.parse(result.toString()));
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     // process.exit(1);
