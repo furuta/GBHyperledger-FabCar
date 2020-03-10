@@ -100,7 +100,7 @@ router.get('/info', async function(req, res, next) {
 
     const result = await contract.submitTransaction('getMyMedicalInfo');
 
-    res.json(result);
+    res.json(JSON.parse(result.toString()));
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     // process.exit(1);
