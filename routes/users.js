@@ -78,8 +78,22 @@ router.get('/info', async function(req, res, next) {
   const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
   
   try {
+    const name = 'doctor_test1';
+
+    const walletPath = path.join(process.cwd(), 'wallet');
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(`Wallet path: ${walletPath}`);
+
+    // Check to see if we've already enrolled the user.
+    const userExists = await wallet.exists(name);
+
+    if (!userExists) {
+      console.log(`An identity for the user ${name} does not exist in the wallet`);
+      return;
+    }
+
     const gateway = new Gateway();
-    await gateway.connect(ccpPath, { wallet, identity: 'doctor_test1', discovery: { enabled: true, asLocalhost: true } });
+    await gateway.connect(ccpPath, { wallet, identity: name, discovery: { enabled: true, asLocalhost: true } });
     const network = await gateway.getNetwork('mychannel');
     const contract = network.getContract('record_dev');
 
